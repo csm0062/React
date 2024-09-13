@@ -41,10 +41,10 @@ public class MemberController {
         ResponseDto<MemberDto> responseDto = new ResponseDto<>();
 
         try {
-            MemberDto joinMemberDto = memberService.join(memberDto);
+            MemberDto joinMemberDto = memberService.login(memberDto);
 
-            responseDto.setStatusCode(HttpStatus.CREATED.value());
-            responseDto.setStatusMessage("created");
+            responseDto.setStatusCode(HttpStatus.OK.value());
+            responseDto.setStatusMessage("ok");
             responseDto.setItem(joinMemberDto);
 
             return ResponseEntity.ok(responseDto);
