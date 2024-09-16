@@ -1,5 +1,8 @@
 import React, {useState, useCallback} from 'react';
-import {Button, Container, Grid, Link, TextField, Typography} from '@mui/material';
+import {Button, Container, Grid, TextField, Typography} from '@mui/material';
+import axios from 'axios';
+import {useDispatch} from 'react-redux';
+import { join } from '../apis/memberApis';
 
 const Join = () => {
     const [joinForm, setJoinForm] = useState({
@@ -15,6 +18,8 @@ const Join = () => {
     const [passwordChk, setPasswordChk] = useState(false);
     const [nicknameChk, setNicknameChk] = useState(false);
 
+    const dispatch = useDispatch();
+
     const changeTextField = useCallback((e) => {
         setJoinForm({
             ...joinForm,
@@ -23,7 +28,13 @@ const Join = () => {
 
         if(e.target.name === 'username') {
             setUsernameChk(false);
-            document.querySelector("#username-chk-btn").removeAttribute('disabled');
+            document.querySelector("#username-check-btn").removeAttribute('disabled');
+            return;
+        }
+
+        if(e.target.name === 'nickname') {
+            setNicknameChk(false);
+            document.querySelector("#nickname-check-btn").removeAttribute('disabled');
             return;
         }
 
@@ -52,9 +63,109 @@ const Join = () => {
         }
     }, [joinForm]);
 
+    const usernameCheck = useCallback(async () => {
+        try {
+            if(joinForm.username === '') {
+                alert('아이디를 입력하세요.');
+                document.querySelector('#username').focus();
+                return;
+            }
+
+            const response = await axios.post('http://localhost:9090/members/username-check', {
+                username: joinForm.username
+            });
+
+            if(response.data.item.usernameCheckMsg === 'invalid username') {
+                alert('중복된 아이디입니다. 다른 아이디로 변경해주세요.');
+                document.querySelector('#username').focus();
+                return;
+            } else {
+                if(window.confirm(`${joinForm.username}은 사용가능한 아이디입니다. 사용하시겠습니까?`)) {
+                    document.querySelector('#username-check-btn').setAttribute('disabled', true);
+                    setUsernameChk(true);
+                    return;
+                }
+            }
+        } catch(e) {
+            console.log(e);
+            alert("에러가 발생했습니다.");
+        }
+    }, [joinForm.username]);
+
+    const nicknameCheck = useCallback(async () => {
+        try {
+            if(joinForm.nickname === '') {
+                alert('닉네임을 입력하세요.');
+                document.querySelector('#nickname').focus();
+                return;
+            }
+
+            const response = await axios.post('http://localhost:9090/members/nickname-check', {
+                nickname: joinForm.nickname
+            });
+
+            if(response.data.item.nicknameCheckMsg === 'invalid nickname') {
+                alert('중복된 닉네임입니다. 다른 닉네임을 사용하세요.');
+                document.querySelector('#nickname').focus();
+                return;
+            } else {
+                if(window.confirm(`${joinForm.nickname}은 사용가능한 닉네임입니다. 사용하시겠습니까?`)) {
+                    document.querySelector('#nickname-check-btn').setAttribute('disabled', true);
+                    setNicknameChk(true);
+                    return;
+                }
+            }
+        } catch(e) {
+            console.log(e);
+            alert('에러가 발생했습니다.');
+        }
+    }, [joinForm.nickname]);
+
+    const validatePassword = useCallback(() => {
+        return /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*+=-]).{9,}$/.test(joinForm.password);
+    }, [joinForm.password]);
+
+    const passwordBlur = useCallback(() => {
+        if(validatePassword()) {
+            setPasswordValidate(true);
+            document.querySelector('#password-validation').style.display = 'none';
+            return;
+        }
+
+        setPasswordValidate(false);
+        document.querySelector('#password-validation').style.display = 'block';
+        return;
+    }, [validatePassword]);
+
+    const handleJoin = useCallback((e) => {
+        e.preventDefault();
+
+        if(!usernameChk) {
+            alert('아이디 중복확인을 진행하세요.');
+            return;
+        }
+
+        if(!passwordValidate) {
+            alert('비밀번호는 특수문자, 숫자, 영문자 조합의 9자리 이상으로 지정하세요.');
+            return;
+        }
+
+        if(!passwordChk) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        if(!nicknameChk) {
+            alert('닉네임 중복확인을 진행하세요.');
+            return;
+        }
+
+        dispatch(join(joinForm));
+    }, [joinForm, usernameChk, passwordChk, passwordValidate, nicknameChk, dispatch]);
+
   return (
     <Container component='div' maxWidth='xs' style={{marginTop: '8%'}}>
-        <form>
+        <form onSubmit={handleJoin}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Typography component='h1' variant='h5'>
@@ -73,7 +184,9 @@ const Join = () => {
                         value={joinForm.username}
                         onChange={changeTextField}
                     ></TextField>
-                    <Button name='username-chk-btn' id='username-chk-btn' color='primary'>
+                    <Button name='username-check-btn' id='username-check-btn' color='primary'
+                            type='button'
+                            onClick={usernameCheck}>
                         중복확인
                     </Button>
                 </Grid>
@@ -88,6 +201,7 @@ const Join = () => {
                         type='password'
                         value={joinForm.password}
                         onChange={changeTextField}
+                        onBlur={passwordBlur}
                     ></TextField>
                     <Typography
                         name='password-validation'
@@ -132,13 +246,14 @@ const Join = () => {
                         name='nickname'
                         variant='outlined'
                         required
-                        id='nicname'
+                        id='nickname'
                         label='닉네임'
                         fullWidth
                         value={joinForm.nickname}
                         onChange={changeTextField}
                     ></TextField>
-                    <Button name='nickname-chk-btn' id='nickname-chk-btn' color='primary'>
+                    <Button name='nickname-check-btn' id='nickname-check-btn' color='primary'
+                            onClick={nicknameCheck}>
                         중복확인
                     </Button>
                 </Grid>
