@@ -16,8 +16,9 @@ public class MemberDto {
     private String email;
     private String tel;
     private String role;
+    private String token;
 
-    public Member toEntiy() {
+    public Member toEntity() {
         return Member.builder()
                 .id(this.id)
                 .username(this.username)

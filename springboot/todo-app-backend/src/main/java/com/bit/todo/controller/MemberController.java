@@ -41,11 +41,11 @@ public class MemberController {
         ResponseDto<MemberDto> responseDto = new ResponseDto<>();
 
         try {
-            MemberDto joinMemberDto = memberService.login(memberDto);
+            MemberDto loginMemberDto = memberService.login(memberDto);
 
             responseDto.setStatusCode(HttpStatus.OK.value());
             responseDto.setStatusMessage("ok");
-            responseDto.setItem(joinMemberDto);
+            responseDto.setItem(loginMemberDto);
 
             return ResponseEntity.ok(responseDto);
         } catch (Exception e) {
