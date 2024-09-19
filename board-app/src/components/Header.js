@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {AppBar, Box, Button, Toolbar, Typography} from '@mui/material';
 import {useNavigate} from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../apis/memberApis';
 
 const Header = () => {
     const navi = useNavigate();
+    const dispatch = useDispatch();
 
     const isLogin = useSelector(state => state.memberSlice.isLogin);
     const nickname = useSelector(state => state.memberSlice.nickname);
+
+    const handleLogout = useCallback(() => {
+        dispatch(logout());
+        navi("/login");
+    }, [dispatch, navi]);
 
   return (
     <Box sx={{flexGrow: 1}}>
@@ -23,7 +30,7 @@ const Header = () => {
                     isLogin ?
                     <>
                         <Button color='inherit'>{nickname}</Button>
-                        <Button color='inherit'>로그아웃</Button>
+                        <Button color='inherit' onClick={handleLogout}>로그아웃</Button>
                     </>
                     :
                     <>

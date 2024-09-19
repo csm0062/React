@@ -40,6 +40,7 @@ public class SecurityConfiguration {
                                                                              , "/members/nickname-check"
                                                                              , "/members/join"
                                                                              , "/members/login").permitAll();
+                    authorizationManagerRequestMatcherRegistry.anyRequest().authenticated();
 //                    authorizationManagerRequestMatcherRegistry.requestMatchers("/members/nickname-check").permitAll();
                 })
                 .addFilterAfter(jwtAuthenticationFilter, CorsFilter.class)
