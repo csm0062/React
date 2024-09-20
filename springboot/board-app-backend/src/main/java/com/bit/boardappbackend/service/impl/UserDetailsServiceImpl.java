@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Member member = memberRepository.findByUsername(username).orElseThrow(
                 () -> new RuntimeException("member not exist")
         );
-                
+
         return CustomUserDetails.builder()
                 .member(member)
                 .build();

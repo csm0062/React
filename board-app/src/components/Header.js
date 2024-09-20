@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import {AppBar, Box, Button, Toolbar, Typography} from '@mui/material';
 import {useNavigate} from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { logout } from '../apis/memberApis';
 
 const Header = () => {
@@ -25,7 +25,7 @@ const Header = () => {
                             style={{cursor: 'pointer'}}>
                     Home
                 </Typography>
-                <Button color='inherit'>게시판</Button>
+                <Button color='inherit' onClick={() => navi('/board-list')}>게시판</Button>
                 {
                     isLogin ?
                     <>

@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class BaordFileDto {
+public class BoardFileDto {
     private Long id;
     private Long board_id;
     private String filename;

@@ -2,7 +2,7 @@ import React, {useState, useCallback} from 'react';
 import {Button, Container, Grid, TextField, Typography} from '@mui/material';
 import {useDispatch} from 'react-redux';
 import { login } from '../apis/memberApis';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 const Login = () => {
     const [loginForm, setLoginForm] = useState({
@@ -23,14 +23,12 @@ const Login = () => {
     const handleLogin = useCallback((e) => {
         e.preventDefault();
 
-        // dispatch의 비동기 처리가 제대로 완료됐을 때는 then 매소드의 state에
+        // dispatch의 비동기 처리가 제대로 완료됐을 때는 then 메소드의 state에 
         // action 객체가 하나 넘어오고 에러가 발생했을 때는 에러 action 객체가 담긴다.
         dispatch(login(loginForm)).then((action) => {
             if(action.type === 'members/login/fulfilled') {
                 navi("/");
             }
-            console.log(action);
-            
         });
 
     }, [loginForm, dispatch, navi]);

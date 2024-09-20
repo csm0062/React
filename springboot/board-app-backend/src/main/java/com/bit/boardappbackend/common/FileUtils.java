@@ -1,17 +1,16 @@
-package com.bit.springboard.common;
+package com.bit.boardappbackend.common;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.bit.springboard.config.NaverConfiguration;
-import com.bit.springboard.dto.BoardFileDto;
+import com.bit.boardappbackend.config.NaverConfiguration;
+import com.bit.boardappbackend.dto.BoardFileDto;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,7 +37,7 @@ public class FileUtils {
                 .withCredentials(
                         new AWSStaticCredentialsProvider(
                                 new BasicAWSCredentials(
-                                        naverConfiguration.getAccessKey(),
+                                        naverConfiguration.getAccesskey(),
                                         naverConfiguration.getSecretKey()
                                 )
                         )

@@ -89,6 +89,7 @@ public class MemberController {
         ResponseDto<MemberDto> responseDto = new ResponseDto<>();
 
         try {
+            log.info("login memberDto: {}", memberDto.toString());
             MemberDto loginMemberDto = memberService.login(memberDto);
 
             responseDto.setStatusCode(HttpStatus.OK.value());
@@ -129,9 +130,6 @@ public class MemberController {
             return ResponseEntity.internalServerError().body(responseDto);
         }
     }
-
-
-
 
 
 

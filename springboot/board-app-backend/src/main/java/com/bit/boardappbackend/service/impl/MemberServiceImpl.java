@@ -19,7 +19,6 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
 
-
     @Override
     public Map<String, String> usernameCheck(String username) {
         Map<String, String> userCheckMsgMap = new HashMap<>();
@@ -27,9 +26,9 @@ public class MemberServiceImpl implements MemberService {
         long usernameCheck = memberRepository.countByUsername(username);
 
         if(usernameCheck == 0)
-            userCheckMsgMap.put("usernameCheckMsg","available username");
+            userCheckMsgMap.put("usernameCheckMsg", "available username");
         else
-            userCheckMsgMap.put("usernameCheckMsg","invalid username");
+            userCheckMsgMap.put("usernameCheckMsg", "invalid username");
 
         return userCheckMsgMap;
     }
@@ -44,6 +43,7 @@ public class MemberServiceImpl implements MemberService {
             nicknameCheckMsgMap.put("nicknameCheckMsg", "available nickname");
         else
             nicknameCheckMsgMap.put("nicknameCheckMsg", "invalid nickname");
+
         return nicknameCheckMsgMap;
     }
 
@@ -52,7 +52,7 @@ public class MemberServiceImpl implements MemberService {
         memberDto.setRole("ROLE_USER");
         memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
 
-        MemberDto joinedMemberDto = memberRepository.save(memberDto.toEntity()).toDto();
+        MemberDto joinedMemberDto = memberRepository.save(memberDto.toEntiy()).toDto();
 
         joinedMemberDto.setPassword("");
 
@@ -75,6 +75,5 @@ public class MemberServiceImpl implements MemberService {
         loginMemberDto.setToken(jwtProvider.createJwt(member));
 
         return loginMemberDto;
-
     }
 }

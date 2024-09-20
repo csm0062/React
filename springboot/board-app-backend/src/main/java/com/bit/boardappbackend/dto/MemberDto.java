@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class MemberDto {
     private Long id;
     private String username;
@@ -18,7 +19,7 @@ public class MemberDto {
     private String role;
     private String token;
 
-    public Member toEntity() {
+    public Member toEntiy() {
         return Member.builder()
                 .id(this.id)
                 .username(this.username)

@@ -21,12 +21,12 @@ public class CustomUserDetails implements UserDetails {
         List<GrantedAuthority> auths = new ArrayList<>();
 
         auths.add(
-                new GrantedAuthority() {
-                    @Override
-                    public String getAuthority() {
-                        return member.getRole();
-                    }
+            new GrantedAuthority() {
+                @Override
+                public String getAuthority() {
+                    return member.getRole();
                 }
+            }
         );
 
         return auths;
