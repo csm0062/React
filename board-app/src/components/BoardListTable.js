@@ -25,9 +25,9 @@ const BoardListTable = () => {
         dispatch(getBoards({
             searchCondition,
             searchKeyword,
-            page: parseInt(v) -1
+            page: parseInt(v) - 1
         }));
-    } ,[searchCondition, searchKeyword]);
+    }, [searchCondition, searchKeyword]);
 
   return (
     <>

@@ -16,5 +16,7 @@ public interface BoardService {
 
     Page<BoardDto> findAll(String searchCondition, String searchKeyword, Pageable pageable);
 
-    BoardDto deleteById(Long id);
+    void deleteById(Long id);
+
+    BoardDto modify(BoardDto boardDto, MultipartFile[] uploadFiles, MultipartFile[] changeFiles, String originFiles, Member member);
 }

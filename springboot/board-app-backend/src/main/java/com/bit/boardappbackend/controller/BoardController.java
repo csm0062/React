@@ -2,6 +2,7 @@ package com.bit.boardappbackend.controller;
 
 import com.bit.boardappbackend.dto.BoardDto;
 import com.bit.boardappbackend.dto.ResponseDto;
+import com.bit.boardappbackend.entity.Board;
 import com.bit.boardappbackend.entity.CustomUserDetails;
 import com.bit.boardappbackend.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -31,14 +33,15 @@ public class BoardController {
     * multipartFile이 추가된 데이터는 @RequestPart로 받아준다.
     * */
     public ResponseEntity<?> post(@RequestPart("boardDto") BoardDto boardDto,
-                                  @RequestPart(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
-                                  @AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                  @PageableDefault(page = 0, size = 10) Pageable pageable) {
+            @RequestPart(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
         ResponseDto<BoardDto> responseDto = new ResponseDto<>();
 
         try {
             log.info("post boardDto: {}", boardDto);
-            Page<BoardDto> boardDtoList = boardService.post(boardDto, uploadFiles, customUserDetails.getMember(), pageable);
+            Page<BoardDto> boardDtoList = boardService.post(boardDto, uploadFiles,
+                    customUserDetails.getMember(), pageable);
 
             log.info("post boardDtoList: {}", boardDtoList);
             responseDto.setPageItems(boardDtoList);
@@ -57,7 +60,7 @@ public class BoardController {
     @GetMapping
     public ResponseEntity<?> getBoards(@RequestParam("searchCondition") String searchCondtion,
                                        @RequestParam("searchKeyword") String searchKeyword,
-                                       @PageableDefault(page = 0, size = 10)Pageable pageable) {
+                                       @PageableDefault(page = 0, size = 10) Pageable pageable) {
         ResponseDto<BoardDto> responseDto = new ResponseDto<>();
 
         try {
@@ -81,11 +84,11 @@ public class BoardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable ("id") Long id) {
+    public ResponseEntity<?> findById(@PathVariable("id") Long id) {
         ResponseDto<BoardDto> responseDto = new ResponseDto<>();
 
         try {
-//            log.info();
+            log.info("findById id: {}", id);
             BoardDto boardDto = boardService.findById(id);
 
             responseDto.setItem(boardDto);
@@ -106,9 +109,10 @@ public class BoardController {
         ResponseDto<BoardDto> responseDto = new ResponseDto<>();
 
         try {
-            BoardDto boardDto = boardService.deleteById(id);
+            log.info("deleteById id: {}", id);
 
-            responseDto.setItem(boardDto);
+            boardService.deleteById(id);
+
             responseDto.setStatusCode(HttpStatus.NO_CONTENT.value());
             responseDto.setStatusMessage("no content");
 
@@ -121,9 +125,41 @@ public class BoardController {
         }
     }
 
+    @PatchMapping
+    public ResponseEntity<?> modify(@RequestPart("boardDto") BoardDto boardDto,
+           @RequestPart(value = "uploadFiles", required = false) MultipartFile[] uploadFiles,
+           @RequestPart(value = "changeFiles", required = false) MultipartFile[] changeFiles,
+           @RequestPart(value = "originFiles", required = false) String originFiles,
+           @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        ResponseDto<BoardDto> responseDto = new ResponseDto<>();
 
+        try {
+            log.info("modify boardDto: {}", boardDto);
 
+            if(uploadFiles != null && uploadFiles.length > 0)
+                Arrays.stream(uploadFiles).forEach(file ->
+                        log.info("modify uploadFile: {}", file.getOriginalFilename()));
+            if(changeFiles != null && uploadFiles.length > 0)
+                Arrays.stream(changeFiles).forEach(file ->
+                        log.info("modify changeFile: {}", file.getOriginalFilename()));
 
+            log.info("modify originFiles: {}", originFiles);
+
+            BoardDto modifiedBoardDto = boardService.modify(boardDto, uploadFiles,
+                    changeFiles, originFiles, customUserDetails.getMember());
+
+            responseDto.setItem(modifiedBoardDto);
+            responseDto.setStatusCode(HttpStatus.OK.value());
+            responseDto.setStatusMessage("ok");
+
+            return ResponseEntity.ok(responseDto);
+        } catch(Exception e) {
+            log.error("modify error: {}", e.getMessage());
+            responseDto.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            responseDto.setStatusMessage(e.getMessage());
+            return ResponseEntity.internalServerError().body(responseDto);
+        }
+    }
 
 
 
